@@ -22,7 +22,7 @@ To run this project locally and contribute, you need to set up several external 
 1.  **Clone the Repository:**
     ```bash
     git clone [YOUR_REPO_URL]
-    cd doc-to-slides-ai-generator
+    cd doc-to-slides
     ```
 
 2.  **Install Dependencies:**
@@ -32,8 +32,8 @@ To run this project locally and contribute, you need to set up several external 
     # Install server dependencies (including express-session)
     npm install
     
-    # If the frontend is in a separate 'client' folder, run:
-    # cd client
+    # Install client dependencies
+    # cd frontend
     # npm install
     ```
 
@@ -43,19 +43,20 @@ To run this project locally and contribute, you need to set up several external 
     ```env
     # --- Gemini API Key ---
     GEMINI_API_KEY=""
+    #will be sent on whatsapp
 
     # --- Canva Credentials ---
     CANVA_CLIENT_ID=""
     CANVA_CLIENT_SECRET=""
     # NOTE: This MUST match the authorized redirect URI in the Canva Developer Portal exactly
-    CANVA_REDIRECT_URI="http://localhost:3000/canva/callback"
+    CANVA_REDIRECT_URI="http://localhost:3030/canva/callback"
     ```
 
 ---
 
 ## 2. API Credentials & Authentication
 
-### 2.1. 🧠 Gemini API Key
+### 2.1. 🧠 Gemini API Key (skip)
 
 1.  Go to **Google AI Studio** and generate an API key.
 2.  Copy the key and paste it into the `GEMINI_API_KEY` field in your `.env` file.
@@ -66,12 +67,18 @@ To run this project locally and contribute, you need to set up several external 
 2.  Navigate to your app's **App Settings**.
 3.  Under the **OAuth** section, set the **Authorized redirect URI** to:
     ```
-    http://localhost:3000/canva/callback
+    http://localhost:3030/canva/callback
     ```
 4.  Copy the **Client ID** and **Client Secret** and add them to your `.env` file:
     * `CANVA_CLIENT_ID`
     * `CANVA_CLIENT_SECRET`
-5.  Ensure the necessary **Scopes** are enabled for your app in the portal (e.g., `user.info:read`, `designs.manage`).
+5.  Ensure the necessary **Scopes** are enabled for your app in the portal.
+    asset - write
+    brandtemplate:content - read
+    brandtemplate:meta - read
+    design:content - write
+    design:meta - read
+    profile - read
 
 ### 2.3. 🗃️ Google Slides API Setup
 
@@ -83,8 +90,8 @@ This project uses your personal Google account to create slides, requiring local
 2.  Go to **APIs & Services > Credentials**.
 3.  Click **"Create Credentials" > "OAuth client ID"**.
     * **Application type:** **Web application**.
-    * **Authorized JavaScript origins:** `http://localhost:3000`
-    * **Authorized redirect URIs:** `http://localhost:3000/oauth2callback`
+    * **Authorized JavaScript origins:** `http://localhost:3030`
+    * **Authorized redirect URIs:** `http://localhost:3030/oauth2callback`
 4.  Download the JSON file and rename it to **`credentials.json`**.
 5.  Place the **`credentials.json`** file in the **root directory** of your project.
 
@@ -95,7 +102,7 @@ The `token.json` file holds your personal access and refresh tokens. You must ge
 1.  Ensure your `credentials.json` file is in the root directory.
 2.  Start the server:
     ```bash
-    npm start # or node server.js
+    nodemon server.js
     ```
 3.  The console will output a new authorization URL:
     ```
@@ -113,12 +120,14 @@ Once all the files (`.env`, `credentials.json`, `token.json`) are correctly plac
 
 1.  **Start the Server:**
     ```bash
-    npm start # or nodemon server.js
+    nodemon server.js
     ```
 2.  **Start the Frontend (Client):**
-    If your frontend is a separate React app, run it from its directory (e.g., `cd client`):
+    Run frontend it from its directory:
     ```bash
+    cd frontend
     npm start
     ```
 
-The application should now be accessible, typically at `http://localhost:3000`.
+The application should now be accessible, typically at `http://localhost:3030`.
+
