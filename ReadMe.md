@@ -33,8 +33,8 @@ To run this project locally and contribute, you need to set up several external 
     npm install
     
     # Install client dependencies
-    # cd frontend
-    # npm install
+    cd frontend
+    npm install
     ```
 
 3.  **Create Environment File (`.env`):**
@@ -43,7 +43,7 @@ To run this project locally and contribute, you need to set up several external 
     ```env
     # --- Gemini API Key ---
     GEMINI_API_KEY=""
-    #will be sent on whatsapp
+    # will be sent on whatsapp group
 
     # --- Canva Credentials ---
     CANVA_CLIENT_ID=""
