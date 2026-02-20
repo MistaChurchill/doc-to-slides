@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
 function App() {
   const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false); // ✅ loader state
   const [response, setResponse] = useState('');
 
   const handleFileChange = (e) => {
@@ -10,28 +11,60 @@ function App() {
   };
 
   const handleUpload = async () => {
-    if (!file) return;
+    if (!file) return alert("Please select a file!");
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
+
+    setLoading(true);
+    setResponse("");
 
     try {
-      const res = await axios.post('http://localhost:3000/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const res = await axios.post("http://localhost:3000/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        responseType: "blob", // ✅ important! expect a file
       });
-       window.alert("Server response:", res.data); // ✅ see full object in browser console
-      setResponse(res.data.slides);
+
+      const cleanedTextHeader = res.headers["x-cleaned-text"];
+      const cleanedText = cleanedTextHeader
+        ? decodeURIComponent(cleanedTextHeader)
+        : "No text received";
+      setResponse(cleanedText);
+
+      // Create a download link
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "presentation.pptx"; // ✅ file name
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+       // Clean up
+      window.URL.revokeObjectURL(url);
+
+      // --- Show text inside <pre> for comparison ---
+      setResponse(cleanedText);
     } catch (err) {
       console.error(err);
-      setResponse('Upload failed.');
+      alert("Upload failed. Check console for details.");
+    } finally {
+      setLoading(false);
     }
-  };  
+  };
 
   return (
     <div style={{ padding: 20 }}>
       <h1>Upload Document</h1>
       <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload} style={{ marginLeft: 10 }}>Generate Slides</button>
+      <button
+        onClick={handleUpload}
+        style={{ marginLeft: 10 }}
+        disabled={loading}
+      >
+        {loading ? "Generating..." : "Generate Slides"}
+      </button>
+      {loading && <p>⏳ Please wait, generating presentation...</p>}
       <pre>{response}</pre>
     </div>
   );
